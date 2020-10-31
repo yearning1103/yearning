@@ -1,0 +1,71 @@
+#检查时钟同步服务状态/启动/停止
+service  ntpd status/start/stop
+
+#检查网卡设置
+more /etc/sysconfig/network-scripts/ifcfg-eth0
+
+#修改网卡设置
+vi /etc/sysconfig/network-scripts/ifcfg-eth0
+
+注释HWADDR-----仅针对实验环境及后续克隆需求，生产环境别这么玩
+#HWADDR
+设置开机自启动：ONBOOT=yes
+设置IP获取方式为静态ip：BOOTPROTO=static
+IPADDR=
+NETMASK=
+GATEWAY=
+DNS1=
+
+PS：IP规划可以看vm虚拟网卡地址来确定
+
+
+排除 0网络号、1windows、2网关、255广播
+
+更改完保存
+
+#重启network服务
+service network restart
+
+#防火墙关闭（可选，重启恢复）
+service iptables stop
+
+#开机禁用防火墙服务
+chkconfig iptables off
+
+#关闭selinux
+vi /etc/selinux
+SELINUX=disabled
+
+#修改hosts解析文件
+vi /etv/hosts
+
+#如果要以此机作克隆，特别注意去 /etc/udev/rules.d/下，查看70-xx-net.rules文件，并且删除此文件，不然克隆出来的其他机器无法使用etho端口
+物理环境下不需要，实验环境才需要
+
+#关机
+poweroff
+
+#为当前虚拟机拍摄快照，做好备份（最好是关机拍）注意下图中的状态选项
+基于现有关机状态快照状态克隆
+
+克隆出你想要的几台设备，然后开机修改剩余几台设备的 主机名/网络/hosts文件
+#更改主机名
+vi /etc/sysconfig/network
+
+
+#修改linux界面显示方式,更改为命令行模式减轻主机负载压力
+快捷方式：Ctrl+Alt+F1--F6
+开机启动：
+启动进入命令行模式
+修改/etc/inittab文件 
+"id:3:initdefault" 
+ 
+启动进入图形界面 
+修改/etc/inittab文件 
+"id:5:initdefault"
+
+
+ 
+
+
+
